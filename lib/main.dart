@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './screens/AuthScreen.dart';
+import './screens/InitScreen.dart';
 import './screens/HomeScreen.dart';
 
 void main() => runApp(MyToDoListApp());
@@ -11,13 +13,15 @@ class MyToDoListApp extends StatelessWidget {
       title: 'Todo List',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color.fromRGBO(243, 245, 249, 1),
-        accentColor: Color.fromRGBO(56, 149, 249, 1),
+        accentColor: Color.fromRGBO(243, 245, 249, 1),
+        primaryColor: Color.fromRGBO(56, 149, 249, 1),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'OpenSans',
       ),
-      initialRoute: HomeScreen.routeName,
+      initialRoute: InitScreen.routeName,
       routes: {
+        InitScreen.routeName: (ctx) => InitScreen(),
+        AuthScreen.routeName: (ctx) => AuthScreen(),
         HomeScreen.routeName: (ctx) => HomeScreen(),
       },
     );
