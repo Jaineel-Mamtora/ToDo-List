@@ -51,6 +51,7 @@ class _InitScreenState extends State<InitScreen> {
               'ToDo List',
               style: TextStyle(fontSize: 24),
             ),
+            SizedBox(height: 30),
             FutureBuilder<bool>(
               future: _checkAuthStatus(context),
               builder: (BuildContext c, AsyncSnapshot<bool> snapshot) {

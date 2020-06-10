@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import './TodoScreen.dart';
 import '../providers/FirebaseAuthenticationService.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double statusBarHeight = MediaQuery.of(context).padding.top;
+    final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -31,7 +36,30 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Container(),
+                    user != null
+                        ? StreamBuilder<QuerySnapshot>(
+                            stream: Firestore.instance
+                                .collection('users')
+                                .document(user.uid)
+                                .collection('todo')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return Container(
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                );
+                              }
+                              // List<DocumentSnapshot> docs = snapshot.data.documents;
+
+                              return Container();
+                            },
+                          )
+                        : Container(),
                   ],
                 ),
               ),
@@ -67,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(TodoScreen.routeName);
+        },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: Icon(
           Icons.add,
