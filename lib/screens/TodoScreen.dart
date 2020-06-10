@@ -7,6 +7,19 @@ import '../providers/TodoProvider.dart';
 
 class TodoScreen extends StatefulWidget {
   static const routeName = '/todo';
+  final String id;
+  final String title;
+  final String priority;
+  final Timestamp startTime;
+  final Timestamp endTime;
+
+  TodoScreen({
+    this.id,
+    this.title,
+    this.priority,
+    this.startTime,
+    this.endTime,
+  });
 
   @override
   _TodoScreenState createState() => _TodoScreenState();
@@ -18,6 +31,8 @@ class _TodoScreenState extends State<TodoScreen> {
   TextEditingController _startDateController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
   TextEditingController _subTaskController = TextEditingController();
+  bool isUpdate = false;
+  bool isAlreadyUpdated = false;
 
   DateTime _pickedStartDate;
   DateTime _pickedEndDate;
@@ -80,6 +95,21 @@ class _TodoScreenState extends State<TodoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if ((widget.id != null ||
+            widget.title != null ||
+            widget.priority != null ||
+            widget.startTime != null ||
+            widget.endTime != null) &&
+        isAlreadyUpdated == false) {
+      isUpdate = true;
+      isAlreadyUpdated = true;
+      _titleController.text = widget.title;
+      _selectedPriority = widget.priority;
+      _startDateController.text =
+          DateFormat('dd MMM, yyyy').format(widget.startTime.toDate());
+      _endDateController.text =
+          DateFormat('dd MMM, yyyy').format(widget.endTime.toDate());
+    }
     Size deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -122,12 +152,24 @@ class _TodoScreenState extends State<TodoScreen> {
                             _endDateController.text == '')
                         ? null
                         : () {
-                            TodoProvider.uploadTodo(
-                              title: _titleController.text,
-                              priority: _selectedPriority,
-                              startTime: Timestamp.fromDate(_pickedStartDate),
-                              endTime: Timestamp.fromDate(_pickedEndDate),
-                            );
+                            if (isUpdate == true) {
+                              TodoProvider.uploadTodo(
+                                id: widget.id,
+                                title: _titleController.text,
+                                priority: _selectedPriority,
+                                startTime: Timestamp.fromDate(
+                                    widget.startTime.toDate()),
+                                endTime:
+                                    Timestamp.fromDate(widget.endTime.toDate()),
+                              );
+                            } else {
+                              TodoProvider.uploadTodo(
+                                title: _titleController.text,
+                                priority: _selectedPriority,
+                                startTime: Timestamp.fromDate(_pickedStartDate),
+                                endTime: Timestamp.fromDate(_pickedEndDate),
+                              );
+                            }
                           },
                   ),
                 ],

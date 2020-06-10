@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../screens/TodoScreen.dart';
+
 class CustomTodoListTile extends StatelessWidget {
+  final String id;
   final String title;
   final String priority;
   final Timestamp startTime;
   final Timestamp endTime;
 
   CustomTodoListTile({
+    this.id,
     this.title,
     this.priority,
     this.startTime,
@@ -28,10 +32,30 @@ class CustomTodoListTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ListTile(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => TodoScreen(
+                id: id,
+                title: title,
+                priority: priority,
+                startTime: startTime,
+                endTime: endTime,
+              ),
+            ),
+          );
+        },
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(title),
+            Flexible(
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
+              ),
+            ),
             IconButton(
               alignment: Alignment.center,
               padding: EdgeInsets.all(0),

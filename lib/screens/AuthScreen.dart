@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/CustomTextField.dart';
@@ -169,7 +170,7 @@ class _AuthCardState extends State<AuthCard>
                             _passwordController.text,
                             switchLoading,
                           );
-                        else
+                        else {
                           _auth.signUpWithEmail(
                             context,
                             _emailController.text,
@@ -177,6 +178,7 @@ class _AuthCardState extends State<AuthCard>
                             _confirmPasswordController.text,
                             switchLoading,
                           );
+                        }
                       },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),

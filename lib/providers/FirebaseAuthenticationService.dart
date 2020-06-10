@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../screens/HomeScreen.dart';
 import '../screens/AuthScreen.dart';
@@ -39,6 +40,9 @@ class FirebaseAuthenticationService {
           email: email, password: password);
       FirebaseUser user = result.user;
       print(user.uid);
+      Firestore.instance.collection('users').document(user.uid).setData({
+        'userId': user.uid,
+      });
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } on PlatformException catch (e) {
       switchLoading();

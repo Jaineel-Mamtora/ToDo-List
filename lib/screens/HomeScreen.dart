@@ -65,11 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
                                 return Container(
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                    ),
+                                  margin: EdgeInsets.only(
+                                    top: deviceSize.height * 0.35,
+                                  ),
+                                  child: CircularProgressIndicator(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
                                   ),
                                 );
                               }
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               DocumentSnapshot doc = snapshot.data;
                               List<CustomTodoListTile> todoListTile = [];
 
-                              if (doc.data.isEmpty) {
+                              if (doc.data['todos'] == null) {
                                 return Container(
                                   margin: EdgeInsets.only(
                                     top: deviceSize.height * 0.35,
@@ -96,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               List<Todo> todos = List.from(doc.data['todos'])
                                   .map(
                                     (todo) => Todo(
+                                      id: todo['id'],
                                       title: todo['title'],
                                       endTime: todo['endTime'],
                                       priority: todo['priority'],
@@ -107,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               todos.forEach((todo) {
                                 todoListTile.add(
                                   CustomTodoListTile(
+                                    id: todo.id,
                                     title: todo.title,
                                     priority: todo.priority,
                                     startTime: todo.startTime,
@@ -114,10 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               });
-
-                              if (todoListTile.isEmpty) {
-                                return Image.asset('assets/images/waiting.png');
-                              }
 
                               return Column(
                                 children: todoListTile,
