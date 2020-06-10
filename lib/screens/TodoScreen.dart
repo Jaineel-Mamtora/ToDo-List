@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ToDoList/models/Todo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../providers/TodoProvider.dart';
+import '../widgets/SubTaskDialog.dart';
+import '../widgets/CustomSubTodoListTile.dart';
 
 class TodoScreen extends StatefulWidget {
   static const routeName = '/todo';
@@ -110,6 +115,7 @@ class _TodoScreenState extends State<TodoScreen> {
       _endDateController.text =
           DateFormat('dd MMM, yyyy').format(widget.endTime.toDate());
     }
+    final user = Provider.of<FirebaseUser>(context);
     Size deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -137,10 +143,10 @@ class _TodoScreenState extends State<TodoScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  FlatButton(
+                  FlatButton.icon(
+                    icon: Icon(Icons.save),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    visualDensity: VisualDensity.compact,
-                    child: Text(
+                    label: Text(
                       'Save Task',
                       style: TextStyle(
                         fontSize: deviceSize.height * 0.025,
@@ -152,8 +158,9 @@ class _TodoScreenState extends State<TodoScreen> {
                             _endDateController.text == '')
                         ? null
                         : () {
+                            // print(isAlreadyUpdated);
                             if (isUpdate == true) {
-                              TodoProvider.uploadTodo(
+                              TodoProvider.updateTodo(
                                 context: context,
                                 id: widget.id,
                                 title: _titleController.text,
@@ -182,12 +189,24 @@ class _TodoScreenState extends State<TodoScreen> {
                 horizontal: deviceSize.width * 0.04,
                 vertical: deviceSize.height * 0.02,
               ),
-              child: TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Theme.of(context).accentColor,
-                  hintText: "Todo Title*",
+              child: ConstrainedBox(
+                constraints: new BoxConstraints(
+                  minHeight: 50,
+                  maxHeight: 100,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  reverse: true,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Theme.of(context).accentColor,
+                      hintText: "Todo Title*",
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -289,6 +308,136 @@ class _TodoScreenState extends State<TodoScreen> {
                   ),
                 ),
               ],
+            ),
+            user != null && widget.id != null
+                ? StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance
+                        .collection('users')
+                        .document(user.uid)
+                        .collection('todos')
+                        .where('id', isEqualTo: widget.id)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        // print(widget.id);
+                        return Container(
+                          margin: EdgeInsets.only(
+                            top: deviceSize.height * 0.35,
+                          ),
+                          child: CircularProgressIndicator(
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                        );
+                      }
+
+                      DocumentSnapshot doc = snapshot.data.documents
+                          .firstWhere((d) => d.data['id'] == widget.id);
+                      List<CustomSubTodoListTile> subTodoListTile = [];
+
+                      if (doc.data['sub-todos'] == null) {
+                        return Container(
+                            // margin: EdgeInsets.only(
+                            //   top: deviceSize.height * 0.35,
+                            // ),
+                            // child: Text(
+                            //   "Oops! Your Todo List is Empty\nPress '+' Button to Add",
+                            //   textAlign: TextAlign.center,
+                            //   style: TextStyle(
+                            //     fontSize: 18,
+                            //     color: Colors.grey,
+                            //   ),
+                            // ),
+                            );
+                      }
+
+                      List<SubTodo> subTodos = List.from(doc.data['sub-todos'])
+                          .map(
+                            (todo) => SubTodo(
+                              id: todo['id'],
+                              title: todo['title'],
+                              endTime: todo['endTime'],
+                              priority: todo['priority'],
+                              startTime: todo['startTime'],
+                            ),
+                          )
+                          .toList();
+
+                      subTodos.forEach((todo) {
+                        subTodoListTile.add(
+                          CustomSubTodoListTile(
+                            todoId: widget.id,
+                            id: todo.id,
+                            title: todo.title,
+                            priority: todo.priority,
+                            startTime: todo.startTime,
+                            endTime: todo.endTime,
+                          ),
+                        );
+                      });
+
+                      if (subTodos.isNotEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: deviceSize.width * 0.06,
+                                vertical: deviceSize.height * 0.01,
+                              ),
+                              child: Text(
+                                'SubTasks:',
+                                style: TextStyle(
+                                  fontSize: deviceSize.height * 0.025,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Column(
+                              children: subTodoListTile,
+                            ),
+                          ],
+                        );
+                      }
+
+                      return Column(
+                        children: subTodoListTile,
+                      );
+                    },
+                  )
+                : Container(width: 0, height: 0),
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: deviceSize.width * 0.04,
+                vertical: deviceSize.height * 0.02,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton.icon(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    onPressed: () {
+                      SubTaskDialog.subTaskDialog(
+                        context: context,
+                        id: widget.id,
+                        title: widget.title,
+                        priority: widget.priority,
+                        startTime: widget.startTime,
+                        endTime: widget.endTime,
+                        height: deviceSize.height,
+                        width: deviceSize.width,
+                      );
+                    },
+                    icon: Icon(Icons.playlist_add_check),
+                    color: Theme.of(context).accentColor,
+                    label: Text(
+                      'Add SubTask',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

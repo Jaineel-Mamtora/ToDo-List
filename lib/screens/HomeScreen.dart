@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './TodoScreen.dart';
-import '../providers/Todo.dart';
+import '../models/Todo.dart';
 import '../providers/FirebaseAuthenticationService.dart';
 import '../widgets/CustomTodoListTile.dart';
 
@@ -57,10 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           // CustomTodoListTile(),
-                          StreamBuilder<DocumentSnapshot>(
+                          StreamBuilder<QuerySnapshot>(
                             stream: Firestore.instance
                                 .collection('users')
                                 .document(user.uid)
+                                .collection('todos')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
@@ -75,10 +76,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               }
 
-                              DocumentSnapshot doc = snapshot.data;
+                              List<DocumentSnapshot> docs =
+                                  snapshot.data.documents;
                               List<CustomTodoListTile> todoListTile = [];
 
-                              if (doc.data['todos'] == null) {
+                              docs.forEach((doc) {
+                                todoListTile.add(
+                                  CustomTodoListTile(
+                                    id: doc.data['id'],
+                                    title: doc.data['title'],
+                                    priority: doc.data['priority'],
+                                    startTime: doc.data['startTime'],
+                                    endTime: doc.data['endTime'],
+                                  ),
+                                );
+                              });
+
+                              if (todoListTile.isEmpty) {
                                 return Container(
                                   margin: EdgeInsets.only(
                                     top: deviceSize.height * 0.35,
@@ -93,30 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               }
-
-                              List<Todo> todos = List.from(doc.data['todos'])
-                                  .map(
-                                    (todo) => Todo(
-                                      id: todo['id'],
-                                      title: todo['title'],
-                                      endTime: todo['endTime'],
-                                      priority: todo['priority'],
-                                      startTime: todo['startTime'],
-                                    ),
-                                  )
-                                  .toList();
-
-                              todos.forEach((todo) {
-                                todoListTile.add(
-                                  CustomTodoListTile(
-                                    id: todo.id,
-                                    title: todo.title,
-                                    priority: todo.priority,
-                                    startTime: todo.startTime,
-                                    endTime: todo.endTime,
-                                  ),
-                                );
-                              });
 
                               return Column(
                                 children: todoListTile,

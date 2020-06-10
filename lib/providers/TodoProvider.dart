@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import './Todo.dart';
+import '../models/Todo.dart';
 
 class TodoProvider {
   static Future<void> uploadTodo({
@@ -15,10 +15,12 @@ class TodoProvider {
     Timestamp endTime,
   }) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    CollectionReference userCf = Firestore.instance.collection('users');
-    DocumentReference userDf = userCf.document();
-    String userDocId = userDf.documentID;
-    List<Todo> todoList = [];
+    CollectionReference todoCR = Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .collection('todos');
+    DocumentReference todoDR = todoCR.document();
+    String todoDocId = todoDR.documentID;
     if (title.isEmpty ||
         priority.isEmpty ||
         startTime == null ||
@@ -27,79 +29,151 @@ class TodoProvider {
       return;
     }
 
-    var doc =
-        await Firestore.instance.collection('users').document(user.uid).get();
-    // print(doc.data['todos'] != null);
-    // print(id != null);
-    if (doc.data['todos'] != null && id != null) {
-      print(id);
-      List<Todo> allTodos = List.from(doc.data['todos'])
+    await todoCR.document(todoDocId).setData({
+      'id': todoDocId,
+      'title': title,
+      'priority': priority,
+      'startTime': startTime,
+      'endTime': endTime,
+    }, merge: true);
+
+    Fluttertoast.showToast(msg: 'Saved Successfully!');
+    Navigator.of(context).pop();
+  }
+
+  static Future<void> uploadAndUpdateSubTodo({
+    BuildContext context,
+    String id,
+    String title,
+    String priority,
+    Timestamp startTime,
+    Timestamp endTime,
+  }) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    CollectionReference todoCR = Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .collection('todos');
+    DocumentReference todoDR = todoCR.document();
+    String subtodoDocId = todoDR.documentID;
+    if (title.isEmpty ||
+        priority.isEmpty ||
+        startTime == null ||
+        endTime == null) {
+      Fluttertoast.showToast(msg: "Please enter all the details");
+      return;
+    }
+    List<SubTodo> subTodoList = [];
+
+    DocumentSnapshot doc = await todoCR.document(id).get();
+
+    if (doc.data['sub-todos'] != null && id != null) {
+      // print(id);
+      List<SubTodo> allSubTodos = List.from(doc.data['sub-todos'])
           .map(
-            (todo) => Todo(
-              id: todo['id'],
-              title: todo['title'],
-              priority: todo['priority'],
-              startTime: todo['startTime'],
-              endTime: todo['endTime'],
+            (subTodo) => SubTodo(
+              id: subTodo['id'],
+              title: subTodo['title'],
+              priority: subTodo['priority'],
+              startTime: subTodo['startTime'],
+              endTime: subTodo['endTime'],
             ),
           )
           .toList();
-      var t = allTodos.where((todo) => todo.id == id).toList();
-      if (t != null) {
-        // print('t != null : ${t[0].id}');
-        await Firestore.instance
-            .collection('users')
-            .document(user.uid)
-            .updateData({
-          'todos': FieldValue.arrayRemove(
-              t.map((todoItem) => todoItem.toMap()).toList()),
+      var st = allSubTodos.where((todo) => todo.id == id).toList();
+      if (st != null) {
+        await todoCR.document(id).updateData({
+          'sub-todos': FieldValue.arrayRemove(
+              st.map((todoItem) => todoItem.toMap()).toList()),
         });
       }
     }
 
-    Todo todo = Todo(
-      id: userDocId,
+    SubTodo subTodo = SubTodo(
+      id: subtodoDocId,
       title: title,
       priority: priority,
       startTime: startTime,
       endTime: endTime,
     );
 
-    todoList.add(todo);
+    subTodoList.add(subTodo);
 
-    await Firestore.instance.collection('users').document(user.uid).updateData({
-      'todos': FieldValue.arrayUnion(
-          todoList.map((todoItem) => todoItem.toMap()).toList()),
+    await todoCR.document(id).updateData({
+      'sub-todos': FieldValue.arrayUnion(
+          subTodoList.map((subTodoItem) => subTodoItem.toMap()).toList()),
     });
-    Fluttertoast.showToast(msg: 'Saved Successfully!');
     Navigator.of(context).pop();
   }
 
-  static Future<void> deleteTodo(String id) async {
+  static Future<void> updateTodo({
+    BuildContext context,
+    String id,
+    String title,
+    String priority,
+    Timestamp startTime,
+    Timestamp endTime,
+  }) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    var doc =
-        await Firestore.instance.collection('users').document(user.uid).get();
-    if (doc.data['todos'] != null && id != null) {
-      print('In deleteTodo : $id');
-      List<Todo> allTodos = List.from(doc.data['todos'])
+    CollectionReference todoCR = Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .collection('todos');
+
+    if (title.isEmpty ||
+        priority.isEmpty ||
+        startTime == null ||
+        endTime == null) {
+      Fluttertoast.showToast(msg: "Please enter all the details");
+      return;
+    }
+
+    await todoCR.document(id).updateData({
+      'title': title,
+      'priority': priority,
+      'startTime': startTime,
+      'endTime': endTime,
+    });
+    Fluttertoast.showToast(msg: 'Updated Successfully!');
+    Navigator.of(context).pop();
+  }
+
+  static Future<void> deleteTodo(String todoId) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    CollectionReference todoCR = Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .collection('todos');
+
+    await todoCR.document(todoId).delete();
+  }
+
+  static Future<void> deleteSubTodo(String todoId, String subTodoId) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    CollectionReference todoCR = Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .collection('todos');
+    var doc = await todoCR.document(todoId).get();
+
+    if (doc.data['sub-todos'] != null && subTodoId != null) {
+      // print(id);
+      List<SubTodo> allSubTodos = List.from(doc.data['sub-todos'])
           .map(
-            (todo) => Todo(
-              id: todo['id'],
-              title: todo['title'],
-              priority: todo['priority'],
-              startTime: todo['startTime'],
-              endTime: todo['endTime'],
+            (subTodo) => SubTodo(
+              id: subTodo['id'],
+              title: subTodo['title'],
+              priority: subTodo['priority'],
+              startTime: subTodo['startTime'],
+              endTime: subTodo['endTime'],
             ),
           )
           .toList();
-      var t = allTodos.where((todo) => todo.id == id).toList();
-      if (t != null) {
-        await Firestore.instance
-            .collection('users')
-            .document(user.uid)
-            .updateData({
-          'todos': FieldValue.arrayRemove(
-              t.map((todoItem) => todoItem.toMap()).toList()),
+      var st = allSubTodos.where((todo) => todo.id == subTodoId).toList();
+      if (st != null) {
+        await todoCR.document(todoId).updateData({
+          'sub-todos': FieldValue.arrayRemove(
+              st.map((todoItem) => todoItem.toMap()).toList()),
         });
       }
     }

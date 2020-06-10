@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../screens/TodoScreen.dart';
 import '../providers/TodoProvider.dart';
 
-class CustomTodoListTile extends StatelessWidget {
+class CustomSubTodoListTile extends StatelessWidget {
+  final String todoId;
   final String id;
   final String title;
   final String priority;
   final Timestamp startTime;
   final Timestamp endTime;
 
-  CustomTodoListTile({
+  CustomSubTodoListTile({
+    this.todoId,
     this.id,
     this.title,
     this.priority,
@@ -66,7 +67,7 @@ class CustomTodoListTile extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        TodoProvider.deleteTodo(id);
+        TodoProvider.deleteSubTodo(todoId, id);
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -74,57 +75,15 @@ class CustomTodoListTile extends StatelessWidget {
           vertical: deviceSize.height * 0.01,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).accentColor,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: ListTile(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => TodoScreen(
-                  id: id,
-                  title: title,
-                  priority: priority,
-                  startTime: startTime,
-                  endTime: endTime,
-                ),
-              ),
-            );
-          },
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(
-                child: Text(
-                  title,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  softWrap: false,
-                ),
-              ),
-              IconButton(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(0),
-                visualDensity: VisualDensity.compact,
-                iconSize: 40,
-                icon: Icon(
-                  Icons.keyboard_arrow_right,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => TodoScreen(
-                        id: id,
-                        title: title,
-                        priority: priority,
-                        startTime: startTime,
-                        endTime: endTime,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+          title: Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            softWrap: false,
           ),
           subtitle: Row(
             children: <Widget>[
