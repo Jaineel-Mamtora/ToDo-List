@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../providers/TodoProvider.dart';
 
 class TodoScreen extends StatefulWidget {
   static const routeName = '/todo';
@@ -97,6 +100,39 @@ class _TodoScreenState extends State<TodoScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(
+                right: deviceSize.width * 0.04,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  FlatButton(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    child: Text(
+                      'Save Task',
+                      style: TextStyle(
+                        fontSize: deviceSize.height * 0.025,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: (_titleController.text == '' ||
+                            _startDateController.text == '' ||
+                            _endDateController.text == '')
+                        ? null
+                        : () {
+                            TodoProvider.uploadTodo(
+                              title: _titleController.text,
+                              priority: _selectedPriority,
+                              startTime: Timestamp.fromDate(_pickedStartDate),
+                              endTime: Timestamp.fromDate(_pickedEndDate),
+                            );
+                          },
+                  ),
+                ],
+              ),
+            ),
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: deviceSize.width * 0.04,

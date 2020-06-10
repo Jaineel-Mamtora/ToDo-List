@@ -55,11 +55,10 @@ class _InitScreenState extends State<InitScreen> {
             FutureBuilder<bool>(
               future: _checkAuthStatus(context),
               builder: (BuildContext c, AsyncSnapshot<bool> snapshot) {
-                List<Widget> children = [];
                 if (snapshot.hasData && snapshot.data) {
                   print("InitState Returned: ${snapshot.data}");
                   new Future.delayed(
-                    Duration(milliseconds: 100),
+                    Duration(milliseconds: 200),
                     () {
                       print("Redirect => $_redirect $_redirectURL");
                       Navigator.of(_scaffoldKey.currentContext)
@@ -79,10 +78,8 @@ class _InitScreenState extends State<InitScreen> {
                     ),
                   );
                 }
-                print(children.isEmpty.toString());
-                return Column(
-                  children: children,
-                );
+
+                return Container(width: 0, height: 0);
               },
             ),
             CircularProgressIndicator(

@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './TodoScreen.dart';
+import '../providers/Todo.dart';
 import '../providers/FirebaseAuthenticationService.dart';
+import '../widgets/CustomTodoListTile.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -18,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    Size deviceSize = MediaQuery.of(context).size;
     double statusBarHeight = MediaQuery.of(context).padding.top;
     final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
@@ -33,15 +35,32 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    user != null
-                        ? StreamBuilder<QuerySnapshot>(
+              child: user != null
+                  ? SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: deviceSize.width * 0.04,
+                                  vertical: deviceSize.height * 0.02,
+                                ),
+                                child: Text(
+                                  'All Todo',
+                                  style: TextStyle(
+                                    fontSize: deviceSize.height * 0.03,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // CustomTodoListTile(),
+                          StreamBuilder<DocumentSnapshot>(
                             stream: Firestore.instance
                                 .collection('users')
                                 .document(user.uid)
-                                .collection('todo')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
@@ -54,18 +73,64 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               }
-                              // List<DocumentSnapshot> docs = snapshot.data.documents;
 
-                              return Container();
+                              DocumentSnapshot doc = snapshot.data;
+                              List<CustomTodoListTile> todoListTile = [];
+
+                              if (doc.data.isEmpty) {
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                    top: deviceSize.height * 0.35,
+                                  ),
+                                  child: Text(
+                                    "Oops! Your Todo List is Empty\nPress '+' Button to Add",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              List<Todo> todos = List.from(doc.data['todos'])
+                                  .map(
+                                    (todo) => Todo(
+                                      title: todo['title'],
+                                      endTime: todo['endTime'],
+                                      priority: todo['priority'],
+                                      startTime: todo['startTime'],
+                                    ),
+                                  )
+                                  .toList();
+
+                              todos.forEach((todo) {
+                                todoListTile.add(
+                                  CustomTodoListTile(
+                                    title: todo.title,
+                                    priority: todo.priority,
+                                    startTime: todo.startTime,
+                                    endTime: todo.endTime,
+                                  ),
+                                );
+                              });
+
+                              if (todoListTile.isEmpty) {
+                                return Image.asset('assets/images/waiting.png');
+                              }
+
+                              return Column(
+                                children: todoListTile,
+                              );
                             },
                           )
-                        : Container(),
-                  ],
-                ),
-              ),
+                        ],
+                      ),
+                    )
+                  : Container(),
             ),
             Container(
-              height: height * 0.065,
+              height: deviceSize.height * 0.065,
               color: Colors.white,
               child: ListTile(
                 leading: IconButton(
@@ -101,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: Icon(
           Icons.add,
-          size: height * 0.04,
+          size: deviceSize.height * 0.04,
           color: Theme.of(context).accentColor,
         ),
       ),

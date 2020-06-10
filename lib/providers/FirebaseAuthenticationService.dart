@@ -38,11 +38,9 @@ class FirebaseAuthenticationService {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      user.sendEmailVerification();
       print(user.uid);
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } on PlatformException catch (e) {
-      switchLoading();
       switchLoading();
       print(e.code);
       switch (e.code) {
