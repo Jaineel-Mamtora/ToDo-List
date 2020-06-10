@@ -154,6 +154,7 @@ class _TodoScreenState extends State<TodoScreen> {
                         : () {
                             if (isUpdate == true) {
                               TodoProvider.uploadTodo(
+                                context: context,
                                 id: widget.id,
                                 title: _titleController.text,
                                 priority: _selectedPriority,
@@ -164,6 +165,7 @@ class _TodoScreenState extends State<TodoScreen> {
                               );
                             } else {
                               TodoProvider.uploadTodo(
+                                context: context,
                                 title: _titleController.text,
                                 priority: _selectedPriority,
                                 startTime: Timestamp.fromDate(_pickedStartDate),
