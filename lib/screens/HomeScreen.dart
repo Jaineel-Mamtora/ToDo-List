@@ -123,7 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         snapshot.data.data;
 
                                     if (userData['sortByPriority'] == true &&
-                                        userData['sortByDate'] == true) {
+                                        userData['sortByDateAscending'] ==
+                                            true) {
                                       todoListTile.sort(
                                         (a, b) => a.todoEntity.startDate
                                             .toDate()
@@ -132,10 +133,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                       );
                                       todoListTile.sort(
-                                        (a, b) => a.todoEntity.priority.index
+                                        (a, b) => a.todoEntity.startDate
+                                            .toDate()
                                             .compareTo(
-                                          b.todoEntity.priority.index,
-                                        ),
+                                              b.todoEntity.startDate.toDate(),
+                                            ),
+                                      );
+                                    } else if (userData['sortByPriority'] ==
+                                            true &&
+                                        userData['sortByDateDescending'] ==
+                                            true) {
+                                      todoListTile.sort(
+                                        (a, b) => b.todoEntity.startDate
+                                            .toDate()
+                                            .compareTo(
+                                              a.todoEntity.startDate.toDate(),
+                                            ),
+                                      );
+                                      todoListTile.sort(
+                                        (a, b) => a.todoEntity.startDate
+                                            .toDate()
+                                            .compareTo(
+                                              b.todoEntity.startDate.toDate(),
+                                            ),
                                       );
                                     } else if (userData['sortByPriority'] ==
                                         true) {
@@ -145,12 +165,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                           b.todoEntity.priority.index,
                                         ),
                                       );
-                                    } else if (userData['sortByDate'] == true) {
+                                    } else if (userData[
+                                            'sortByDateAscending'] ==
+                                        true) {
                                       todoListTile.sort(
                                         (a, b) => a.todoEntity.startDate
                                             .toDate()
                                             .compareTo(
                                               b.todoEntity.startDate.toDate(),
+                                            ),
+                                      );
+                                    } else if (userData[
+                                            'sortByDateDescending'] ==
+                                        true) {
+                                      todoListTile.sort(
+                                        (a, b) => b.todoEntity.startDate
+                                            .toDate()
+                                            .compareTo(
+                                              a.todoEntity.startDate.toDate(),
                                             ),
                                       );
                                     }

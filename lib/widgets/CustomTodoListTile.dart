@@ -51,7 +51,11 @@ class CustomTodoListTile extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
                 child: Text('Yes'),
                 onPressed: () {
-                  Fluttertoast.showToast(msg: 'Task deleted successfully!');
+                  Fluttertoast.showToast(
+                    msg: 'Task deleted successfully!',
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                  );
                   Navigator.of(ctx).pop(true);
                 },
               ),

@@ -43,7 +43,8 @@ class FirebaseAuthenticationService {
       Firestore.instance.collection('users').document(user.uid).setData({
         'userId': user.uid,
         'sortByPriority': false,
-        'sortByDate': false,
+        'sortByDateAscending': false,
+        'sortByDateDescending': false,
       });
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } on PlatformException catch (e) {

@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../providers/SortProvider.dart';
 
@@ -21,6 +21,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
+              color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -56,6 +57,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       thickness: 1,
                     ),
                   ),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: deviceSize.width * 0.05,
+                    ),
+                    child: Text(
+                      'Sorting',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   StreamBuilder<DocumentSnapshot>(
                     stream: Firestore.instance
                         .collection('users')
@@ -74,6 +87,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       }
                       Map<String, dynamic> userData = snapshot.data.data;
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           SwitchListTile(
                             title: const Text('Sort by Priority'),
@@ -81,8 +95,42 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             activeColor: Theme.of(context).primaryColor,
                             onChanged: (bool value) {
                               setState(() {
-                                SortProvider.uploadsortByPriority(
+                                SortProvider.uploadSortByPriority(
                                     sortByPriority: value);
+                              });
+                            },
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: deviceSize.width * 0.05,
+                            ),
+                            child: Text(
+                              'Sort by Date:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          SwitchListTile(
+                            title: const Text('Ascending'),
+                            value: userData['sortByDateAscending'],
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (bool value) {
+                              setState(() {
+                                SortProvider.uploadSortByDateAscending(
+                                    sortByDateAscending: value);
+                              });
+                            },
+                          ),
+                          SwitchListTile(
+                            title: const Text('Descending'),
+                            value: userData['sortByDateDescending'],
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (bool value) {
+                              setState(() {
+                                SortProvider.uploadSortByDateDescending(
+                                    sortByDateDescending: value);
                               });
                             },
                           ),
@@ -93,17 +141,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             child: Divider(
                               thickness: 1,
                             ),
-                          ),
-                          SwitchListTile(
-                            title: const Text('Sort by Date'),
-                            value: userData['sortByDate'],
-                            activeColor: Theme.of(context).primaryColor,
-                            onChanged: (bool value) {
-                              setState(() {
-                                SortProvider.uploadsortByDate(
-                                    sortByDate: value);
-                              });
-                            },
                           ),
                         ],
                       );

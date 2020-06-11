@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SortProvider {
-  static Future<void> uploadsortByPriority({bool sortByPriority}) async {
+  static Future<void> uploadSortByPriority({bool sortByPriority}) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (sortByPriority == null) {
       Fluttertoast.showToast(msg: 'Please set Priority!');
@@ -14,14 +14,27 @@ class SortProvider {
         .updateData({'sortByPriority': sortByPriority});
   }
 
-  static Future<void> uploadsortByDate({bool sortByDate}) async {
+  static Future<void> uploadSortByDateAscending(
+      {bool sortByDateAscending}) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    if (sortByDate == null) {
-      Fluttertoast.showToast(msg: 'Please set Title!');
+    if (sortByDateAscending == null) {
+      Fluttertoast.showToast(msg: 'Please set Date!');
     }
-    await Firestore.instance
-        .collection('users')
-        .document(user.uid)
-        .updateData({'sortByDate': sortByDate});
+    await Firestore.instance.collection('users').document(user.uid).updateData({
+      'sortByDateAscending': sortByDateAscending,
+      'sortByDateDescending': false,
+    });
+  }
+
+  static Future<void> uploadSortByDateDescending(
+      {bool sortByDateDescending}) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    if (sortByDateDescending == null) {
+      Fluttertoast.showToast(msg: 'Please set Date!');
+    }
+    await Firestore.instance.collection('users').document(user.uid).updateData({
+      'sortByDateDescending': sortByDateDescending,
+      'sortByDateAscending': false,
+    });
   }
 }

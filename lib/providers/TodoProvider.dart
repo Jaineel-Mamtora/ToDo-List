@@ -33,7 +33,11 @@ class TodoProvider {
       'endDate': todoEntity.endDate,
     }, merge: true);
 
-    Fluttertoast.showToast(msg: 'Saved Successfully!');
+    Fluttertoast.showToast(
+      msg: 'Saved Successfully!',
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
     Navigator.of(context).pop();
   }
 
@@ -99,7 +103,11 @@ class TodoProvider {
           subTodoList.map((subTodoItem) => subTodoItem.toMap()).toList()),
     });
 
-    Fluttertoast.showToast(msg: 'Added Successfully!');
+    Fluttertoast.showToast(
+      msg: 'Added Successfully!',
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
     Navigator.of(context).pop();
   }
 
@@ -127,7 +135,11 @@ class TodoProvider {
       'startDate': todoEntity.startDate,
       'endDate': todoEntity.endDate,
     });
-    Fluttertoast.showToast(msg: 'Updated Successfully!');
+    Fluttertoast.showToast(
+      msg: 'Updated Successfully!',
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
     Navigator.of(context).pop();
   }
 
