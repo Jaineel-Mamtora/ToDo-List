@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum Priority { Important, Urgent, Critical }
+enum Priority { Critical, Urgent, Important }
 
 String getPriorityString(int index) {
   Map<int, String> priorityMap = {
-    0: 'Important',
+    0: 'Critical',
     1: 'Urgent',
-    2: 'Critical',
+    2: 'Important',
   };
   return priorityMap[index];
 }
 
 int getPriorityIndex(String priority) {
   Map<int, String> indexMap = {
-    0: 'Important',
+    0: 'Critical',
     1: 'Urgent',
-    2: 'Critical',
+    2: 'Important',
   };
   int index = indexMap.keys
       .firstWhere((k) => indexMap[k] == priority, orElse: () => null);

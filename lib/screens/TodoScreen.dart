@@ -420,6 +420,11 @@ class _TodoScreenState extends State<TodoScreen> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     onPressed: () {
+                      if (widget.todoEntity == null) {
+                        Fluttertoast.showToast(
+                            msg: 'Please fill the Todo First');
+                        return;
+                      }
                       SubTaskDialog.subTaskDialog(
                         context: context,
                         subTodoEntity: SubTodo(

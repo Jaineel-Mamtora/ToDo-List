@@ -19,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final FirebaseAuthenticationService _auth = FirebaseAuthenticationService();
+  bool priority;
+  bool title;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +100,66 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               });
+                              if (todoListTile.isNotEmpty) {
+                                return StreamBuilder<DocumentSnapshot>(
+                                  stream: Firestore.instance
+                                      .collection('users')
+                                      .document(user.uid)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Container(
+                                        margin: EdgeInsets.only(
+                                          top: deviceSize.height * 0.35,
+                                        ),
+                                        child: CircularProgressIndicator(
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                        ),
+                                      );
+                                    }
+
+                                    Map<String, dynamic> userData =
+                                        snapshot.data.data;
+
+                                    if (userData['sortByPriority'] == true &&
+                                        userData['sortByDate'] == true) {
+                                      todoListTile.sort(
+                                        (a, b) => a.todoEntity.startDate
+                                            .toDate()
+                                            .compareTo(
+                                              b.todoEntity.startDate.toDate(),
+                                            ),
+                                      );
+                                      todoListTile.sort(
+                                        (a, b) => a.todoEntity.priority.index
+                                            .compareTo(
+                                          b.todoEntity.priority.index,
+                                        ),
+                                      );
+                                    } else if (userData['sortByPriority'] ==
+                                        true) {
+                                      todoListTile.sort(
+                                        (a, b) => a.todoEntity.priority.index
+                                            .compareTo(
+                                          b.todoEntity.priority.index,
+                                        ),
+                                      );
+                                    } else if (userData['sortByDate'] == true) {
+                                      todoListTile.sort(
+                                        (a, b) => a.todoEntity.startDate
+                                            .toDate()
+                                            .compareTo(
+                                              b.todoEntity.startDate.toDate(),
+                                            ),
+                                      );
+                                    }
+                                    return Column(
+                                      children: todoListTile,
+                                    );
+                                  },
+                                );
+                              }
 
                               if (todoListTile.isEmpty) {
                                 return Container(

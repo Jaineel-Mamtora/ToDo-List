@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class CustomDrawer extends StatefulWidget {
-  static bool sortByPriority = false;
-  static bool sortByTitle = false;
+import '../providers/SortProvider.dart';
 
+class CustomDrawer extends StatefulWidget {
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
@@ -56,32 +56,57 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       thickness: 1,
                     ),
                   ),
-                  SwitchListTile(
-                    title: const Text('Sort by Priority'),
-                    value: CustomDrawer.sortByPriority,
-                    activeColor: Theme.of(context).primaryColor,
-                    onChanged: (bool value) {
-                      setState(() {
-                        CustomDrawer.sortByPriority = value;
-                      });
-                    },
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: deviceSize.width * 0.03,
-                    ),
-                    child: Divider(
-                      thickness: 1,
-                    ),
-                  ),
-                  SwitchListTile(
-                    title: const Text('Sort by Priority'),
-                    value: CustomDrawer.sortByTitle,
-                    activeColor: Theme.of(context).primaryColor,
-                    onChanged: (bool value) {
-                      setState(() {
-                        CustomDrawer.sortByTitle = value;
-                      });
+                  StreamBuilder<DocumentSnapshot>(
+                    stream: Firestore.instance
+                        .collection('users')
+                        .document(user.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                            top: deviceSize.height * 0.35,
+                          ),
+                          child: CircularProgressIndicator(
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                        );
+                      }
+                      Map<String, dynamic> userData = snapshot.data.data;
+                      return Column(
+                        children: <Widget>[
+                          SwitchListTile(
+                            title: const Text('Sort by Priority'),
+                            value: userData['sortByPriority'],
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (bool value) {
+                              setState(() {
+                                SortProvider.uploadsortByPriority(
+                                    sortByPriority: value);
+                              });
+                            },
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: deviceSize.width * 0.03,
+                            ),
+                            child: Divider(
+                              thickness: 1,
+                            ),
+                          ),
+                          SwitchListTile(
+                            title: const Text('Sort by Date'),
+                            value: userData['sortByDate'],
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (bool value) {
+                              setState(() {
+                                SortProvider.uploadsortByDate(
+                                    sortByDate: value);
+                              });
+                            },
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ],
