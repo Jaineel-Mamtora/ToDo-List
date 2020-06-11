@@ -44,6 +44,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     child: Text(
                       '${user.email}',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: false,
                       style: TextStyle(
                         fontSize: 16,
                       ),

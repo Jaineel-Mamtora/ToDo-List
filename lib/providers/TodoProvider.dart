@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/Todo.dart';
+import '../screens/HomeScreen.dart';
 
 class TodoProvider {
   static Future<void> uploadTodo({
@@ -140,7 +141,8 @@ class TodoProvider {
       backgroundColor: Colors.green,
       textColor: Colors.white,
     );
-    Navigator.of(context).pop();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
   }
 
   static Future<void> deleteTodo(String todoId) async {

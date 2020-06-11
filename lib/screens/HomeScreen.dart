@@ -5,8 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './TodoScreen.dart';
 import '../models/Todo.dart';
+import '../models/User.dart';
 import '../providers/FirebaseAuthenticationService.dart';
 import '../widgets/CustomDrawer.dart';
+import '../widgets/TodoSearch.dart';
 import '../widgets/CustomTodoListTile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -45,24 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: deviceSize.width * 0.04,
-                                  vertical: deviceSize.height * 0.02,
-                                ),
-                                child: Text(
-                                  'All Todo',
-                                  style: TextStyle(
-                                    fontSize: deviceSize.height * 0.03,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          // CustomTodoListTile(),
                           StreamBuilder<QuerySnapshot>(
                             stream: Firestore.instance
                                 .collection('users')
@@ -73,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (!snapshot.hasData) {
                                 return Container(
                                   margin: EdgeInsets.only(
-                                    top: deviceSize.height * 0.35,
+                                    top: deviceSize.height * 0.4,
                                   ),
                                   child: CircularProgressIndicator(
                                     backgroundColor:
@@ -100,7 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               });
+
                               if (todoListTile.isNotEmpty) {
+                                List<String> titles = [];
+                                todoListTile.forEach((todo) {
+                                  titles.add(todo.todoEntity.title);
+                                });
                                 return StreamBuilder<DocumentSnapshot>(
                                   stream: Firestore.instance
                                       .collection('users')
@@ -110,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     if (!snapshot.hasData) {
                                       return Container(
                                         margin: EdgeInsets.only(
-                                          top: deviceSize.height * 0.35,
+                                          top: deviceSize.height * 0.4,
                                         ),
                                         child: CircularProgressIndicator(
                                           backgroundColor:
@@ -121,6 +110,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                     Map<String, dynamic> userData =
                                         snapshot.data.data;
+
+                                    User user = User(
+                                      userId: userData['userId'],
+                                      sortByPriority:
+                                          userData['sortByPriority'],
+                                      sortByDateAscending:
+                                          userData['sortByDateAscending'],
+                                      sortByDateDescending:
+                                          userData['sortByDateDescending'],
+                                    );
 
                                     if (userData['sortByPriority'] == true &&
                                         userData['sortByDateAscending'] ==
@@ -187,7 +186,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     }
                                     return Column(
-                                      children: todoListTile,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    deviceSize.width * 0.04,
+                                                vertical:
+                                                    deviceSize.height * 0.02,
+                                              ),
+                                              child: Text(
+                                                'All Todo',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      deviceSize.height * 0.03,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.search),
+                                              onPressed: () {
+                                                showSearch(
+                                                  context: context,
+                                                  delegate: TodoSearch(
+                                                    ctx: context,
+                                                    titles: titles,
+                                                    todoList: todoListTile,
+                                                    user: user,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: todoListTile,
+                                        ),
+                                      ],
                                     );
                                   },
                                 );
@@ -196,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (todoListTile.isEmpty) {
                                 return Container(
                                   margin: EdgeInsets.only(
-                                    top: deviceSize.height * 0.35,
+                                    top: deviceSize.height * 0.4,
                                   ),
                                   child: Text(
                                     "Oops! Your Todo List is Empty\nPress '+' Button to Add",
