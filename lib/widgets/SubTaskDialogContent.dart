@@ -24,7 +24,7 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
   DateTime _pickedStartDate;
   DateTime _pickedEndDate;
 
-  List<String> _priorities = ['Critical', 'Urgent', 'Important'];
+  List<String> _priorities = ['Important', 'Urgent', 'Critical'];
   String _selectedPriority;
 
   _getStartDate(BuildContext ctx) async {
@@ -228,7 +228,8 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
                             subTodoEntity: SubTodo(
                               id: widget.subTodoEntity.id,
                               title: _titleController.text,
-                              priority: _selectedPriority,
+                              priority: Priority
+                                  .values[getPriorityIndex(_selectedPriority)],
                               startDate: Timestamp.fromDate(_pickedStartDate),
                               endDate: Timestamp.fromDate(_pickedEndDate),
                             ),

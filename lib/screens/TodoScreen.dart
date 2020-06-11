@@ -32,7 +32,7 @@ class _TodoScreenState extends State<TodoScreen> {
   DateTime _pickedStartDate;
   DateTime _pickedEndDate;
 
-  List<String> _priorities = ['Critical', 'Urgent', 'Important'];
+  List<String> _priorities = ['Important', 'Urgent', 'Critical'];
   String _selectedPriority;
 
   _getStartDate(BuildContext ctx) async {
@@ -100,7 +100,7 @@ class _TodoScreenState extends State<TodoScreen> {
         isUpdate = true;
         isAlreadyUpdated = true;
         _titleController.text = widget.todoEntity.title;
-        _selectedPriority = widget.todoEntity.priority;
+        _selectedPriority = getPriorityString(widget.todoEntity.priority.index);
         _startDateController.text = DateFormat('dd MMM, yyyy')
             .format(widget.todoEntity.startDate.toDate());
         _endDateController.text = DateFormat('dd MMM, yyyy')
@@ -157,7 +157,8 @@ class _TodoScreenState extends State<TodoScreen> {
                                 todoEntity: Todo(
                                   id: widget.todoEntity.id,
                                   title: _titleController.text,
-                                  priority: _selectedPriority,
+                                  priority: Priority.values[
+                                      getPriorityIndex(_selectedPriority)],
                                   startDate: Timestamp.fromDate(
                                       widget.todoEntity.startDate.toDate()),
                                   endDate: Timestamp.fromDate(
@@ -169,7 +170,8 @@ class _TodoScreenState extends State<TodoScreen> {
                                 context: context,
                                 todoEntity: Todo(
                                   title: _titleController.text,
-                                  priority: _selectedPriority,
+                                  priority: Priority.values[
+                                      getPriorityIndex(_selectedPriority)],
                                   startDate:
                                       Timestamp.fromDate(_pickedStartDate),
                                   endDate: Timestamp.fromDate(_pickedEndDate),
@@ -353,7 +355,8 @@ class _TodoScreenState extends State<TodoScreen> {
                               id: subTodo['id'],
                               title: subTodo['title'],
                               endDate: subTodo['endDate'],
-                              priority: subTodo['priority'],
+                              priority: Priority.values[
+                                  int.parse(subTodo['priority'].toString())],
                               startDate: subTodo['startDate'],
                             ),
                           )

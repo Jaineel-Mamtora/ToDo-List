@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import './TodoScreen.dart';
 import '../models/Todo.dart';
 import '../providers/FirebaseAuthenticationService.dart';
+import '../widgets/CustomDrawer.dart';
 import '../widgets/CustomTodoListTile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final FirebaseAuthenticationService _auth = FirebaseAuthenticationService();
 
   @override
@@ -24,7 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
     double statusBarHeight = MediaQuery.of(context).padding.top;
     final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
+      drawer: CustomDrawer(),
       body: Container(
         margin: EdgeInsets.only(top: statusBarHeight * 1.1),
         height: double.maxFinite,
@@ -86,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     todoEntity: Todo(
                                       id: doc.data['id'],
                                       title: doc.data['title'],
-                                      priority: doc.data['priority'],
+                                      priority: Priority.values[int.parse(
+                                          doc.data['priority'].toString())],
                                       startDate: doc.data['startDate'],
                                       endDate: doc.data['endDate'],
                                     ),
@@ -126,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListTile(
                 leading: IconButton(
                   icon: Icon(Icons.menu),
-                  onPressed: () {},
+                  onPressed: () => _scaffoldKey.currentState.openDrawer(),
                 ),
                 trailing: PopupMenuButton(
                   itemBuilder: (context) => [
@@ -141,6 +146,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
+                    // PopupMenuItem(
+                    //   value: 2,
+                    //   child: SwitchListTile(
+                    //     title: const Text('Sort by Priority'),
+                    //     value: sortByPriority,
+                    //     onChanged: (bool value) {
+                    //       setState(() {
+                    //         print(sortByPriority);
+                    //         sortByPriority = value;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -132,7 +132,7 @@ class CustomTodoListTile extends StatelessWidget {
               ),
               VerticalDivider(),
               Text(
-                'Priority : ${todoEntity.priority}',
+                'Priority : ${getPriorityString(todoEntity.priority.index)}',
                 style: TextStyle(fontSize: 12),
               ),
             ],

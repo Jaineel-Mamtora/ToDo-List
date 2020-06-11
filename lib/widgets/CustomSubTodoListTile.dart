@@ -47,7 +47,7 @@ class CustomSubTodoListTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text('Subtask Priority :'),
-                    Text('${subTodoEntity.priority}'),
+                    Text('${getPriorityString(subTodoEntity.priority.index)}'),
                   ],
                 ),
                 Divider(
@@ -172,7 +172,7 @@ class CustomSubTodoListTile extends StatelessWidget {
               ),
               VerticalDivider(),
               Text(
-                'Priority : ${subTodoEntity.priority}',
+                'Priority : ${getPriorityString(subTodoEntity.priority.index)}',
                 style: TextStyle(fontSize: 12),
               ),
             ],

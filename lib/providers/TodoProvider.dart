@@ -18,7 +18,7 @@ class TodoProvider {
     DocumentReference todoDR = todoCR.document();
     String todoDocId = todoDR.documentID;
     if (todoEntity.title.isEmpty ||
-        todoEntity.priority.isEmpty ||
+        todoEntity.priority == null ||
         todoEntity.startDate == null ||
         todoEntity.endDate == null) {
       Fluttertoast.showToast(msg: "Please enter all the details");
@@ -28,7 +28,7 @@ class TodoProvider {
     await todoCR.document(todoDocId).setData({
       'id': todoDocId,
       'title': todoEntity.title,
-      'priority': todoEntity.priority,
+      'priority': todoEntity.priority.index,
       'startDate': todoEntity.startDate,
       'endDate': todoEntity.endDate,
     }, merge: true);
@@ -66,7 +66,8 @@ class TodoProvider {
             (subTodo) => SubTodo(
               id: subTodo['id'],
               title: subTodo['title'],
-              priority: subTodo['priority'],
+              priority:
+                  Priority.values[int.parse(subTodo['priority'].toString())],
               startDate: subTodo['startDate'],
               endDate: subTodo['endDate'],
             ),
@@ -113,7 +114,7 @@ class TodoProvider {
         .collection('todos');
 
     if (todoEntity.title.isEmpty ||
-        todoEntity.priority.isEmpty ||
+        todoEntity.priority == null ||
         todoEntity.startDate == null ||
         todoEntity.endDate == null) {
       Fluttertoast.showToast(msg: "Please enter all the details");
@@ -122,7 +123,7 @@ class TodoProvider {
 
     await todoCR.document(todoEntity.id).updateData({
       'title': todoEntity.title,
-      'priority': todoEntity.priority,
+      'priority': todoEntity.priority.index,
       'startDate': todoEntity.startDate,
       'endDate': todoEntity.endDate,
     });
@@ -155,7 +156,8 @@ class TodoProvider {
             (subTodo) => SubTodo(
               id: subTodo['id'],
               title: subTodo['title'],
-              priority: subTodo['priority'],
+              priority:
+                  Priority.values[int.parse(subTodo['priority'].toString())],
               startDate: subTodo['startDate'],
               endDate: subTodo['endDate'],
             ),

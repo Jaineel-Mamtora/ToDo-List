@@ -1,9 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum Priority { Important, Urgent, Critical }
+
+String getPriorityString(int index) {
+  Map<int, String> priorityMap = {
+    0: 'Important',
+    1: 'Urgent',
+    2: 'Critical',
+  };
+  return priorityMap[index];
+}
+
+int getPriorityIndex(String priority) {
+  Map<int, String> indexMap = {
+    0: 'Important',
+    1: 'Urgent',
+    2: 'Critical',
+  };
+  int index = indexMap.keys
+      .firstWhere((k) => indexMap[k] == priority, orElse: () => null);
+  return index;
+}
+
 class Todo {
   final String id;
   final String title;
-  final String priority;
+  final Priority priority;
   final Timestamp startDate;
   final Timestamp endDate;
 
@@ -19,7 +41,7 @@ class Todo {
     return {
       'id': id,
       'title': title,
-      'priority': priority,
+      'priority': priority.index,
       'startDate': startDate,
       'endDate': endDate,
     };
@@ -29,7 +51,7 @@ class Todo {
 class SubTodo {
   final String id;
   final String title;
-  final String priority;
+  final Priority priority;
   final Timestamp startDate;
   final Timestamp endDate;
 
@@ -45,7 +67,7 @@ class SubTodo {
     return {
       'id': id,
       'title': title,
-      'priority': priority,
+      'priority': priority.index,
       'startDate': startDate,
       'endDate': endDate,
     };
