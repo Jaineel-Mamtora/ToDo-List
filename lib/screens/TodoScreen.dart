@@ -70,7 +70,12 @@ class _TodoScreenState extends State<TodoScreen> {
       Fluttertoast.showToast(msg: "Please enter Start Date first.");
       return;
     }
-
+    if ((_pickedEndDate.day <= _pickedStartDate.day &&
+            _pickedEndDate.month == _pickedStartDate.month) ||
+        (_pickedEndDate.month < _pickedStartDate.month)) {
+      Fluttertoast.showToast(msg: "Please select a valid End Date.");
+      return;
+    }
     if (_endDateController.text != null && _pickedEndDate != null) {
       _endDateController.text =
           DateFormat('dd MMM, yyyy').format(_pickedEndDate) ??
