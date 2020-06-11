@@ -119,7 +119,7 @@ class _TodoScreenState extends State<TodoScreen> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          'Create Todo',
+          '${widget.todoEntity != null ? widget.todoEntity.id != null ? 'Update Todo' : 'Create Todo' : 'Create Todo'}',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
