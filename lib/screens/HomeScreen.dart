@@ -132,11 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                       );
                                       todoListTile.sort(
-                                        (a, b) => a.todoEntity.startDate
-                                            .toDate()
+                                        (a, b) => a.todoEntity.priority.index
                                             .compareTo(
-                                              b.todoEntity.startDate.toDate(),
-                                            ),
+                                          b.todoEntity.priority.index,
+                                        ),
                                       );
                                     } else if (userData['sortByPriority'] ==
                                             true &&
@@ -150,11 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                       );
                                       todoListTile.sort(
-                                        (a, b) => a.todoEntity.startDate
-                                            .toDate()
+                                        (a, b) => a.todoEntity.priority.index
                                             .compareTo(
-                                              b.todoEntity.startDate.toDate(),
-                                            ),
+                                          b.todoEntity.priority.index,
+                                        ),
                                       );
                                     } else if (userData['sortByPriority'] ==
                                         true) {
