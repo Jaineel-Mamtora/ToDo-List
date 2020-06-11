@@ -1,31 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../models/Todo.dart';
 import '../providers/TodoProvider.dart';
 
 class CustomSubTodoListTile extends StatelessWidget {
   final String todoId;
-  final String id;
-  final String title;
-  final String priority;
-  final Timestamp startTime;
-  final Timestamp endTime;
+  final SubTodo subTodoEntity;
 
-  CustomSubTodoListTile({
-    this.todoId,
-    this.id,
-    this.title,
-    this.priority,
-    this.startTime,
-    this.endTime,
-  });
+  CustomSubTodoListTile({this.todoId, this.subTodoEntity});
 
   @override
   Widget build(BuildContext context) {
     Size deviceSize = MediaQuery.of(context).size;
     return Dismissible(
-      key: ValueKey(id),
+      key: ValueKey(subTodoEntity.id),
       background: Container(
         color: Colors.red,
         child: Icon(
@@ -50,15 +40,18 @@ class CustomSubTodoListTile extends StatelessWidget {
               'Do you want to remove the Task?',
             ),
             actions: <Widget>[
-              FlatButton(
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
                 child: Text('No'),
                 onPressed: () {
                   Navigator.of(ctx).pop(false);
                 },
               ),
-              FlatButton(
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
                 child: Text('Yes'),
                 onPressed: () {
+                  Fluttertoast.showToast(msg: 'Task deleted successfully!');
                   Navigator.of(ctx).pop(true);
                 },
               ),
@@ -67,7 +60,7 @@ class CustomSubTodoListTile extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        TodoProvider.deleteSubTodo(todoId, id);
+        TodoProvider.deleteSubTodo(todoId, subTodoEntity.id);
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -80,7 +73,7 @@ class CustomSubTodoListTile extends StatelessWidget {
         ),
         child: ListTile(
           title: Text(
-            title,
+            subTodoEntity.title,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
             softWrap: false,
@@ -88,12 +81,12 @@ class CustomSubTodoListTile extends StatelessWidget {
           subtitle: Row(
             children: <Widget>[
               Text(
-                '${DateFormat('dd MMM, yyyy').format(startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(endTime.toDate())}',
+                '${DateFormat('dd MMM, yyyy').format(subTodoEntity.startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(subTodoEntity.endTime.toDate())}',
                 style: TextStyle(fontSize: 12),
               ),
               VerticalDivider(),
               Text(
-                'Priority : $priority',
+                'Priority : ${subTodoEntity.priority}',
                 style: TextStyle(fontSize: 12),
               ),
             ],

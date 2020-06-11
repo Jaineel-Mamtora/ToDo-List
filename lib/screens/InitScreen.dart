@@ -49,7 +49,10 @@ class _InitScreenState extends State<InitScreen> {
           children: [
             Text(
               'ToDo List',
-              style: TextStyle(fontSize: 24),
+              style: TextStyle(
+                fontSize: 24,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             SizedBox(height: 30),
             FutureBuilder<bool>(

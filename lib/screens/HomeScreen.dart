@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './TodoScreen.dart';
+import '../models/Todo.dart';
 import '../providers/FirebaseAuthenticationService.dart';
 import '../widgets/CustomTodoListTile.dart';
 
@@ -82,11 +83,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               docs.forEach((doc) {
                                 todoListTile.add(
                                   CustomTodoListTile(
-                                    id: doc.data['id'],
-                                    title: doc.data['title'],
-                                    priority: doc.data['priority'],
-                                    startTime: doc.data['startTime'],
-                                    endTime: doc.data['endTime'],
+                                    todoEntity: Todo(
+                                      id: doc.data['id'],
+                                      title: doc.data['title'],
+                                      priority: doc.data['priority'],
+                                      startTime: doc.data['startTime'],
+                                      endTime: doc.data['endTime'],
+                                    ),
                                   ),
                                 );
                               });

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './SubTaskDialogContent.dart';
+import '../models/Todo.dart';
 
 class SubTaskDialog {
   static Future<void> subTaskDialog({
     BuildContext context,
     double height,
     double width,
-    String id,
-    String title,
-    String priority,
-    Timestamp startTime,
-    Timestamp endTime,
+    SubTodo subTodoEntity,
   }) async {
     return showDialog<void>(
       context: context,
@@ -24,11 +20,13 @@ class SubTaskDialog {
           ),
           title: Text('Add Subtask'),
           content: SubTaskDialogContent(
-            id: id,
-            title: title,
-            priority: priority,
-            startTime: startTime,
-            endTime: endTime,
+            subTodoEntity: SubTodo(
+              id: subTodoEntity.id,
+              title: subTodoEntity.title,
+              priority: subTodoEntity.priority,
+              startTime: subTodoEntity.startTime,
+              endTime: subTodoEntity.endTime,
+            ),
           ),
         );
       },

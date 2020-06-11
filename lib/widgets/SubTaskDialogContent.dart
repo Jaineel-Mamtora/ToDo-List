@@ -3,22 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../models/Todo.dart';
 import '../providers/TodoProvider.dart';
 
 class SubTaskDialogContent extends StatefulWidget {
-  final String id;
-  final String title;
-  final String priority;
-  final Timestamp startTime;
-  final Timestamp endTime;
+  final SubTodo subTodoEntity;
 
-  SubTaskDialogContent({
-    this.id,
-    this.title,
-    this.priority,
-    this.startTime,
-    this.endTime,
-  });
+  SubTaskDialogContent({this.subTodoEntity});
   @override
   _SubTaskDialogContentState createState() => _SubTaskDialogContentState();
 }
@@ -233,12 +224,14 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
                       ? null
                       : () {
                           TodoProvider.uploadAndUpdateSubTodo(
-                            id: widget.id,
                             context: context,
-                            title: _titleController.text,
-                            priority: _selectedPriority,
-                            startTime: Timestamp.fromDate(_pickedStartDate),
-                            endTime: Timestamp.fromDate(_pickedEndDate),
+                            subTodoEntity: SubTodo(
+                              id: widget.subTodoEntity.id,
+                              title: _titleController.text,
+                              priority: _selectedPriority,
+                              startTime: Timestamp.fromDate(_pickedStartDate),
+                              endTime: Timestamp.fromDate(_pickedEndDate),
+                            ),
                           );
                         },
                 ),

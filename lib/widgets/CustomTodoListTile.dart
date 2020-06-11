@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-import '../screens/TodoScreen.dart';
+import '../models/Todo.dart';
 import '../providers/TodoProvider.dart';
+import '../screens/TodoScreen.dart';
 
 class CustomTodoListTile extends StatelessWidget {
-  final String id;
-  final String title;
-  final String priority;
-  final Timestamp startTime;
-  final Timestamp endTime;
+  final Todo todoEntity;
 
-  CustomTodoListTile({
-    this.id,
-    this.title,
-    this.priority,
-    this.startTime,
-    this.endTime,
-  });
+  CustomTodoListTile({this.todoEntity});
 
   @override
   Widget build(BuildContext context) {
     Size deviceSize = MediaQuery.of(context).size;
     return Dismissible(
-      key: ValueKey(id),
+      key: ValueKey(todoEntity.id),
       background: Container(
         color: Colors.red,
         child: Icon(
@@ -49,15 +40,18 @@ class CustomTodoListTile extends StatelessWidget {
               'Do you want to remove the Task?',
             ),
             actions: <Widget>[
-              FlatButton(
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
                 child: Text('No'),
                 onPressed: () {
                   Navigator.of(ctx).pop(false);
                 },
               ),
-              FlatButton(
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
                 child: Text('Yes'),
                 onPressed: () {
+                  Fluttertoast.showToast(msg: 'Task deleted successfully!');
                   Navigator.of(ctx).pop(true);
                 },
               ),
@@ -66,7 +60,7 @@ class CustomTodoListTile extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        TodoProvider.deleteTodo(id);
+        TodoProvider.deleteTodo(todoEntity.id);
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -82,11 +76,13 @@ class CustomTodoListTile extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => TodoScreen(
-                  id: id,
-                  title: title,
-                  priority: priority,
-                  startTime: startTime,
-                  endTime: endTime,
+                  todoEntity: Todo(
+                    id: todoEntity.id,
+                    title: todoEntity.title,
+                    priority: todoEntity.priority,
+                    startTime: todoEntity.startTime,
+                    endTime: todoEntity.endTime,
+                  ),
                 ),
               ),
             );
@@ -96,7 +92,7 @@ class CustomTodoListTile extends StatelessWidget {
             children: <Widget>[
               Flexible(
                 child: Text(
-                  title,
+                  todoEntity.title,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   softWrap: false,
@@ -114,11 +110,13 @@ class CustomTodoListTile extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => TodoScreen(
-                        id: id,
-                        title: title,
-                        priority: priority,
-                        startTime: startTime,
-                        endTime: endTime,
+                        todoEntity: Todo(
+                          id: todoEntity.id,
+                          title: todoEntity.title,
+                          priority: todoEntity.priority,
+                          startTime: todoEntity.startTime,
+                          endTime: todoEntity.endTime,
+                        ),
                       ),
                     ),
                   );
@@ -129,12 +127,12 @@ class CustomTodoListTile extends StatelessWidget {
           subtitle: Row(
             children: <Widget>[
               Text(
-                '${DateFormat('dd MMM, yyyy').format(startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(endTime.toDate())}',
+                '${DateFormat('dd MMM, yyyy').format(todoEntity.startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(todoEntity.endTime.toDate())}',
                 style: TextStyle(fontSize: 12),
               ),
               VerticalDivider(),
               Text(
-                'Priority : $priority',
+                'Priority : ${todoEntity.priority}',
                 style: TextStyle(fontSize: 12),
               ),
             ],

@@ -184,11 +184,11 @@ class _AuthCardState extends State<AuthCard>
                       ),
                       padding: _authMode == AuthMode.Login
                           ? EdgeInsets.symmetric(
-                              horizontal: deviceSize.width * 0.2,
+                              horizontal: deviceSize.width * 0.21,
                               vertical: deviceSize.height * 0.01,
                             )
                           : EdgeInsets.symmetric(
-                              horizontal: deviceSize.width * 0.17,
+                              horizontal: deviceSize.width * 0.18,
                               vertical: deviceSize.height * 0.01,
                             ),
                       color: Theme.of(context).primaryColor,
