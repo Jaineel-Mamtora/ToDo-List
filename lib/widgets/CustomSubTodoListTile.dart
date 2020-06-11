@@ -11,6 +11,84 @@ class CustomSubTodoListTile extends StatelessWidget {
 
   CustomSubTodoListTile({this.todoId, this.subTodoEntity});
 
+  Future<void> showSubTaskDetailsDialog({
+    BuildContext context,
+    double height,
+    double width,
+    SubTodo subTodoEntity,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text('Subtask Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Subtask Title :'),
+                Divider(
+                  height: 10,
+                ),
+                Text(
+                  '${subTodoEntity.title}',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                Divider(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Subtask Priority :'),
+                    Text('${subTodoEntity.priority}'),
+                  ],
+                ),
+                Divider(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Start Date :'),
+                    Text(
+                        '${DateFormat('dd MMM, yyyy').format(subTodoEntity.startDate.toDate())}'),
+                  ],
+                ),
+                Divider(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('End Date :'),
+                    Text(
+                        '${DateFormat('dd MMM, yyyy').format(subTodoEntity.endDate.toDate())}'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            RaisedButton(
+              color: Theme.of(context).primaryColor,
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size deviceSize = MediaQuery.of(context).size;
@@ -72,6 +150,14 @@ class CustomSubTodoListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: ListTile(
+          onTap: () {
+            showSubTaskDetailsDialog(
+              context: context,
+              height: deviceSize.height,
+              width: deviceSize.width,
+              subTodoEntity: subTodoEntity,
+            );
+          },
           title: Text(
             subTodoEntity.title,
             overflow: TextOverflow.ellipsis,
@@ -81,7 +167,7 @@ class CustomSubTodoListTile extends StatelessWidget {
           subtitle: Row(
             children: <Widget>[
               Text(
-                '${DateFormat('dd MMM, yyyy').format(subTodoEntity.startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(subTodoEntity.endTime.toDate())}',
+                '${DateFormat('dd MMM, yyyy').format(subTodoEntity.startDate.toDate())} - ${DateFormat('dd MMM, yyyy').format(subTodoEntity.endDate.toDate())}',
                 style: TextStyle(fontSize: 12),
               ),
               VerticalDivider(),

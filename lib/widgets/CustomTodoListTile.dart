@@ -80,8 +80,8 @@ class CustomTodoListTile extends StatelessWidget {
                     id: todoEntity.id,
                     title: todoEntity.title,
                     priority: todoEntity.priority,
-                    startTime: todoEntity.startTime,
-                    endTime: todoEntity.endTime,
+                    startDate: todoEntity.startDate,
+                    endDate: todoEntity.endDate,
                   ),
                 ),
               ),
@@ -114,8 +114,8 @@ class CustomTodoListTile extends StatelessWidget {
                           id: todoEntity.id,
                           title: todoEntity.title,
                           priority: todoEntity.priority,
-                          startTime: todoEntity.startTime,
-                          endTime: todoEntity.endTime,
+                          startDate: todoEntity.startDate,
+                          endDate: todoEntity.endDate,
                         ),
                       ),
                     ),
@@ -127,7 +127,7 @@ class CustomTodoListTile extends StatelessWidget {
           subtitle: Row(
             children: <Widget>[
               Text(
-                '${DateFormat('dd MMM, yyyy').format(todoEntity.startTime.toDate())} - ${DateFormat('dd MMM, yyyy').format(todoEntity.endTime.toDate())}',
+                '${DateFormat('dd MMM, yyyy').format(todoEntity.startDate.toDate())} - ${DateFormat('dd MMM, yyyy').format(todoEntity.endDate.toDate())}',
                 style: TextStyle(fontSize: 12),
               ),
               VerticalDivider(),

@@ -24,8 +24,8 @@ class SubTaskDialog {
               id: subTodoEntity.id,
               title: subTodoEntity.title,
               priority: subTodoEntity.priority,
-              startTime: subTodoEntity.startTime,
-              endTime: subTodoEntity.endTime,
+              startDate: subTodoEntity.startDate,
+              endDate: subTodoEntity.endDate,
             ),
           ),
         );

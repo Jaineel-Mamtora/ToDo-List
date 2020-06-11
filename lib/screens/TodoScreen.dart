@@ -90,20 +90,22 @@ class _TodoScreenState extends State<TodoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if ((widget.todoEntity.id != null ||
-            widget.todoEntity.title != null ||
-            widget.todoEntity.priority != null ||
-            widget.todoEntity.startTime != null ||
-            widget.todoEntity.endTime != null) &&
-        isAlreadyUpdated == false) {
-      isUpdate = true;
-      isAlreadyUpdated = true;
-      _titleController.text = widget.todoEntity.title;
-      _selectedPriority = widget.todoEntity.priority;
-      _startDateController.text = DateFormat('dd MMM, yyyy')
-          .format(widget.todoEntity.startTime.toDate());
-      _endDateController.text =
-          DateFormat('dd MMM, yyyy').format(widget.todoEntity.endTime.toDate());
+    if (widget.todoEntity != null) {
+      if ((widget.todoEntity.id != null ||
+              widget.todoEntity.title != null ||
+              widget.todoEntity.priority != null ||
+              widget.todoEntity.startDate != null ||
+              widget.todoEntity.endDate != null) &&
+          isAlreadyUpdated == false) {
+        isUpdate = true;
+        isAlreadyUpdated = true;
+        _titleController.text = widget.todoEntity.title;
+        _selectedPriority = widget.todoEntity.priority;
+        _startDateController.text = DateFormat('dd MMM, yyyy')
+            .format(widget.todoEntity.startDate.toDate());
+        _endDateController.text = DateFormat('dd MMM, yyyy')
+            .format(widget.todoEntity.endDate.toDate());
+      }
     }
     final user = Provider.of<FirebaseUser>(context);
     Size deviceSize = MediaQuery.of(context).size;
@@ -156,10 +158,10 @@ class _TodoScreenState extends State<TodoScreen> {
                                   id: widget.todoEntity.id,
                                   title: _titleController.text,
                                   priority: _selectedPriority,
-                                  startTime: Timestamp.fromDate(
-                                      widget.todoEntity.startTime.toDate()),
-                                  endTime: Timestamp.fromDate(
-                                      widget.todoEntity.endTime.toDate()),
+                                  startDate: Timestamp.fromDate(
+                                      widget.todoEntity.startDate.toDate()),
+                                  endDate: Timestamp.fromDate(
+                                      widget.todoEntity.endDate.toDate()),
                                 ),
                               );
                             } else {
@@ -168,9 +170,9 @@ class _TodoScreenState extends State<TodoScreen> {
                                 todoEntity: Todo(
                                   title: _titleController.text,
                                   priority: _selectedPriority,
-                                  startTime:
+                                  startDate:
                                       Timestamp.fromDate(_pickedStartDate),
-                                  endTime: Timestamp.fromDate(_pickedEndDate),
+                                  endDate: Timestamp.fromDate(_pickedEndDate),
                                 ),
                               );
                             }
@@ -304,7 +306,7 @@ class _TodoScreenState extends State<TodoScreen> {
                 ),
               ],
             ),
-            user != null && widget.todoEntity.id != null
+            user != null && widget.todoEntity != null
                 ? StreamBuilder<QuerySnapshot>(
                     stream: Firestore.instance
                         .collection('users')
@@ -350,9 +352,9 @@ class _TodoScreenState extends State<TodoScreen> {
                             (subTodo) => SubTodo(
                               id: subTodo['id'],
                               title: subTodo['title'],
-                              endTime: subTodo['endTime'],
+                              endDate: subTodo['endDate'],
                               priority: subTodo['priority'],
-                              startTime: subTodo['startTime'],
+                              startDate: subTodo['startDate'],
                             ),
                           )
                           .toList();
@@ -365,8 +367,8 @@ class _TodoScreenState extends State<TodoScreen> {
                               id: subTodo.id,
                               title: subTodo.title,
                               priority: subTodo.priority,
-                              startTime: subTodo.startTime,
-                              endTime: subTodo.endTime,
+                              startDate: subTodo.startDate,
+                              endDate: subTodo.endDate,
                             ),
                           ),
                         );
@@ -421,8 +423,8 @@ class _TodoScreenState extends State<TodoScreen> {
                           id: widget.todoEntity.id,
                           title: widget.todoEntity.title,
                           priority: widget.todoEntity.priority,
-                          startTime: widget.todoEntity.startTime,
-                          endTime: widget.todoEntity.endTime,
+                          startDate: widget.todoEntity.startDate,
+                          endDate: widget.todoEntity.endDate,
                         ),
                         height: deviceSize.height,
                         width: deviceSize.width,

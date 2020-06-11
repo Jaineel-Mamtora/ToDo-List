@@ -103,7 +103,7 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Theme.of(context).accentColor,
-                    hintText: "Todo Title*",
+                    hintText: "Subtask Title*",
                   ),
                 ),
               ),
@@ -126,7 +126,7 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
                     padding: EdgeInsets.only(
                       left: deviceSize.width * 0.03,
                     ),
-                    child: Text("Add Priority"),
+                    child: Text("Add Subtask Priority"),
                   ),
                   value: _selectedPriority,
                   onChanged: (String value) {
@@ -229,8 +229,8 @@ class _SubTaskDialogContentState extends State<SubTaskDialogContent> {
                               id: widget.subTodoEntity.id,
                               title: _titleController.text,
                               priority: _selectedPriority,
-                              startTime: Timestamp.fromDate(_pickedStartDate),
-                              endTime: Timestamp.fromDate(_pickedEndDate),
+                              startDate: Timestamp.fromDate(_pickedStartDate),
+                              endDate: Timestamp.fromDate(_pickedEndDate),
                             ),
                           );
                         },

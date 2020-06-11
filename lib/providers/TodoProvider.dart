@@ -19,8 +19,8 @@ class TodoProvider {
     String todoDocId = todoDR.documentID;
     if (todoEntity.title.isEmpty ||
         todoEntity.priority.isEmpty ||
-        todoEntity.startTime == null ||
-        todoEntity.endTime == null) {
+        todoEntity.startDate == null ||
+        todoEntity.endDate == null) {
       Fluttertoast.showToast(msg: "Please enter all the details");
       return;
     }
@@ -29,8 +29,8 @@ class TodoProvider {
       'id': todoDocId,
       'title': todoEntity.title,
       'priority': todoEntity.priority,
-      'startTime': todoEntity.startTime,
-      'endTime': todoEntity.endTime,
+      'startDate': todoEntity.startDate,
+      'endDate': todoEntity.endDate,
     }, merge: true);
 
     Fluttertoast.showToast(msg: 'Saved Successfully!');
@@ -48,10 +48,10 @@ class TodoProvider {
         .collection('todos');
     DocumentReference todoDR = todoCR.document();
     String subtodoDocId = todoDR.documentID;
-    if (subTodoEntity.title.isEmpty ||
-        subTodoEntity.priority.isEmpty ||
-        subTodoEntity.startTime == null ||
-        subTodoEntity.endTime == null) {
+    if (subTodoEntity.title == null ||
+        subTodoEntity.priority == null ||
+        subTodoEntity.startDate == null ||
+        subTodoEntity.endDate == null) {
       Fluttertoast.showToast(msg: "Please enter all the details");
       return;
     }
@@ -67,8 +67,8 @@ class TodoProvider {
               id: subTodo['id'],
               title: subTodo['title'],
               priority: subTodo['priority'],
-              startTime: subTodo['startTime'],
-              endTime: subTodo['endTime'],
+              startDate: subTodo['startDate'],
+              endDate: subTodo['endDate'],
             ),
           )
           .toList();
@@ -87,8 +87,8 @@ class TodoProvider {
       id: subtodoDocId,
       title: subTodoEntity.title,
       priority: subTodoEntity.priority,
-      startTime: subTodoEntity.startTime,
-      endTime: subTodoEntity.endTime,
+      startDate: subTodoEntity.startDate,
+      endDate: subTodoEntity.endDate,
     );
 
     subTodoList.add(subTodo);
@@ -114,8 +114,8 @@ class TodoProvider {
 
     if (todoEntity.title.isEmpty ||
         todoEntity.priority.isEmpty ||
-        todoEntity.startTime == null ||
-        todoEntity.endTime == null) {
+        todoEntity.startDate == null ||
+        todoEntity.endDate == null) {
       Fluttertoast.showToast(msg: "Please enter all the details");
       return;
     }
@@ -123,8 +123,8 @@ class TodoProvider {
     await todoCR.document(todoEntity.id).updateData({
       'title': todoEntity.title,
       'priority': todoEntity.priority,
-      'startTime': todoEntity.startTime,
-      'endTime': todoEntity.endTime,
+      'startDate': todoEntity.startDate,
+      'endDate': todoEntity.endDate,
     });
     Fluttertoast.showToast(msg: 'Updated Successfully!');
     Navigator.of(context).pop();
@@ -156,8 +156,8 @@ class TodoProvider {
               id: subTodo['id'],
               title: subTodo['title'],
               priority: subTodo['priority'],
-              startTime: subTodo['startTime'],
-              endTime: subTodo['endTime'],
+              startDate: subTodo['startDate'],
+              endDate: subTodo['endDate'],
             ),
           )
           .toList();

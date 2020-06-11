@@ -87,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       id: doc.data['id'],
                                       title: doc.data['title'],
                                       priority: doc.data['priority'],
-                                      startTime: doc.data['startTime'],
-                                      endTime: doc.data['endTime'],
+                                      startDate: doc.data['startDate'],
+                                      endDate: doc.data['endDate'],
                                     ),
                                   ),
                                 );

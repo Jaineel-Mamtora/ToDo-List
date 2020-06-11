@@ -4,15 +4,15 @@ class Todo {
   final String id;
   final String title;
   final String priority;
-  final Timestamp startTime;
-  final Timestamp endTime;
+  final Timestamp startDate;
+  final Timestamp endDate;
 
   Todo({
     this.id,
     this.title,
     this.priority,
-    this.startTime,
-    this.endTime,
+    this.startDate,
+    this.endDate,
   });
 
   Map<dynamic, dynamic> toMap() {
@@ -20,8 +20,8 @@ class Todo {
       'id': id,
       'title': title,
       'priority': priority,
-      'startTime': startTime,
-      'endTime': endTime,
+      'startDate': startDate,
+      'endDate': endDate,
     };
   }
 }
@@ -30,15 +30,15 @@ class SubTodo {
   final String id;
   final String title;
   final String priority;
-  final Timestamp startTime;
-  final Timestamp endTime;
+  final Timestamp startDate;
+  final Timestamp endDate;
 
   SubTodo({
     this.id,
     this.title,
     this.priority,
-    this.startTime,
-    this.endTime,
+    this.startDate,
+    this.endDate,
   });
 
   Map<dynamic, dynamic> toMap() {
@@ -46,8 +46,8 @@ class SubTodo {
       'id': id,
       'title': title,
       'priority': priority,
-      'startTime': startTime,
-      'endTime': endTime,
+      'startDate': startDate,
+      'endDate': endDate,
     };
   }
 }
